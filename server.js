@@ -1,6 +1,7 @@
 const express = require('express');
-
 const data = require('./db/notes');
+const simDB = require('./db/simDB');  
+const notes = simDB.initialize(data); 
 
 const app = express();
 
@@ -29,7 +30,7 @@ http://localhost:8080/api/notes?searchTerm=cats*/
   //This property is an object containing a property for each query string parameter in the route. 
   //If there is no query string, it is the empty object, {}.
   //ex req.query = {searchTerm= cats}
-//=======================================================
+  //=======================================================
   // const requestedData = [];
 
   // if(searchTerm){
@@ -44,31 +45,57 @@ http://localhost:8080/api/notes?searchTerm=cats*/
   //   res.json(data);
   // }
 
-  const searchTerm = req.query.searchTerm;
-  if (searchTerm) {
-    const filteredList = data.filter(function(item) {
-      return item.title.includes(searchTerm);
-    });
-    res.json(filteredList);
-  } else {
-    res.json(data);
-  }
+  //   const searchTerm = req.query.searchTerm;
+  //   if (searchTerm) {
+  //     const filteredList = data.filter(function(item) {
+  //       return item.title.includes(searchTerm);
+  //     });
+  //     res.json(filteredList);
+  //   } else {
+  //     res.json(data);
+  //   }
+  // });
+
+  const { searchTerm } = req.query;
+
+  notes.filter(searchTerm, (err, list) => {
+    if (err) {
+      return next(err); // goes to error handler
+    }
+    res.json(list); // responds with filtered array
+  });
+
 });
 
 //===============================================================
   
-app.get('/api/notes/:id', (req, res) => {
-  const {id} = req.params;
-  //const id = req.params.id; LINE 26 is the same as this
-  let requestedData = data.find(item => item.id === Number(id));
+app.get('/api/notes/:id', (req, res, next) => {
+  // const {id} = req.params;
+  // //const id = req.params.id; LINE 26 is the same as this
+  // let requestedData = data.find(item => item.id === Number(id));
  
-  // //This is the same as line 24
-  //   for (let i = 0 ; i < data.length; i++){
-  //     if (data[i].id=== Number(id)){
-  //       requestedData = data[i];
-  //     }
-  //   }
-  res.json(requestedData);
+  // // //This is the same as line 24
+  // //   for (let i = 0 ; i < data.length; i++){
+  // //     if (data[i].id=== Number(id)){
+  // //       requestedData = data[i];
+  // //     }
+  // //   }
+  // res.json(requestedData);
+
+  const {id} = req.params;
+  notes.find(id, (err,item)=>{
+    if (err) {
+      console.error(err);
+    }
+    if (item) {
+      console.log(item);
+      res.json(item);
+    } else {
+      console.log('not found');
+      next();
+    }
+    
+  });
 
 });
 //===============================================================
