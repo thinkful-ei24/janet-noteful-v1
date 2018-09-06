@@ -23,7 +23,7 @@ notesRouter.get('/', (req, res, next) => {
   
 //===============================================================
     
-notesRouter.get('/', (req, res, next) => {
+notesRouter.get('/:id', (req, res, next) => {
 
   const {id} = req.params;
   notes.find(id, (err,item,)=>{
