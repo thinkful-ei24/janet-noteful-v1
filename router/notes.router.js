@@ -7,7 +7,8 @@ const simDB = require('../db/simDB');
 const notes = simDB.initialize(data); 
 
 
-
+//===============================================================
+// search by title query
 notesRouter.get('/', (req, res, next) => {
   
   const { searchTerm } = req.query;
@@ -22,7 +23,7 @@ notesRouter.get('/', (req, res, next) => {
 });
   
 //===============================================================
-    
+ // get by ID   
 notesRouter.get('/:id', (req, res, next) => {
 
   const {id} = req.params;
@@ -43,7 +44,7 @@ notesRouter.get('/:id', (req, res, next) => {
 });
   
 //===============================================================
-//// PUT ENDPOINT
+// PUT ENDPOINT, update a note object
 notesRouter.put('/', jsonParser, (req, res, next) => {
   const id = req.params.id;
   
@@ -68,5 +69,59 @@ notesRouter.put('/', jsonParser, (req, res, next) => {
     }
   });
 });
+//===============================================================
+// Post (insert) an item
+notesRouter.post('/', (req, res, next) => {
+    const { title, content } = req.body;
+  
+    const newItem = { title, content };
+    /***** Never trust users - validate input *****/
+    if (!newItem.title) {
+      const err = new Error('Missing `title` in request body');
+      err.status = 400;
+      return next(err);
+    }
+  
+    notes.create(newItem, (err, item) => {
+      if (err) {
+        return next(err);
+      }
+      if (item) {
+        res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
+      } else {
+        next();
+      }
+    });
+  });
+
+//===============================================================
+// Delete an item
+notesRouter.delete('/:id', (req, res, next) => {
+    const {id} = req.params;
+    console.log(id);
+    
+    /***** Never trust users - validate input *****/
+    if (!id || isNaN(id)) {
+      const err = new Error('Missing `id` in request body');
+      err.status = 500;
+      return next(err);
+    }
+    notes.delete(id, (err, item) => {
+      if (err) {
+        return next(err);
+      }
+      if (id) {
+        console.log('item deleted');
+        res.status(204).end();
+      } else {
+        next();
+      }
+    });
+
+
+  });
+
+
+
   
 module.exports = notesRouter;
