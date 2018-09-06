@@ -2,11 +2,13 @@ const express = require('express');
 const data = require('./db/notes');
 const simDB = require('./db/simDB');  
 const notes = simDB.initialize(data); 
-
+const morgan = require('morgan');
 const app = express();
 
 const { PORT } = require('./config');
 const {logger} = require('./middleware/logger');
+
+
 
 // ADD STATIC SERVER HERE
 app.use(express.static('public'));
@@ -18,7 +20,7 @@ app.use(express.json());
 //==========================================
 // //logger
 
-app.use(logger);
+app.use(morgan('dev'));
 //==========================================
 
 app.get('/api/notes', (req, res) => {
