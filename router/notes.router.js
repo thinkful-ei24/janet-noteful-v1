@@ -8,7 +8,7 @@ const notes = simDB.initialize(data);
 
 
 
-notesRouter.get('/api/notes', (req, res, next) => {
+notesRouter.get('/', (req, res, next) => {
   
   const { searchTerm } = req.query;
   
@@ -23,7 +23,7 @@ notesRouter.get('/api/notes', (req, res, next) => {
   
 //===============================================================
     
-notesRouter.get('/api/notes/:id', (req, res, next) => {
+notesRouter.get('/', (req, res, next) => {
 
   const {id} = req.params;
   notes.find(id, (err,item,)=>{
@@ -44,7 +44,7 @@ notesRouter.get('/api/notes/:id', (req, res, next) => {
   
 //===============================================================
 //// PUT ENDPOINT
-notesRouter.put('/api/notes/:id', jsonParser, (req, res, next) => {
+notesRouter.put('/', jsonParser, (req, res, next) => {
   const id = req.params.id;
   
   /***** Never trust users - validate input *****/

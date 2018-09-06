@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 //==========================================
 //mounts Router
-app.use();
+app.use('/api/notes', notesRouter);
 
 
 
