@@ -1,28 +1,25 @@
 const express = require('express');
+const app = express();
+
+const morgan = require('morgan');
 const data = require('./db/notes');
 const simDB = require('./db/simDB');  
 const notes = simDB.initialize(data); 
-const morgan = require('morgan');
-const app = express();
+//import router
+const notesRouter = require('./router/notes.router');
 
 const { PORT } = require('./config');
 const {logger} = require('./middleware/logger');
 
-
-
 // ADD STATIC SERVER HERE
 app.use(express.static('public'));
-
-
 // Parse request body
 app.use(express.json());
-
-//==========================================
-// //logger
-
+//logger
 app.use(morgan('dev'));
 //==========================================
-
+//mounts Router
+app.use();
 
 
 

@@ -8,11 +8,11 @@ const notes = simDB.initialize(data);
 
 
 
-notesRouter.get('/api/notes', (req, res) => {
+notesRouter.get('/api/notes', (req, res, next) => {
   
   const { searchTerm } = req.query;
   
-  notes.filter(searchTerm, (err, list) => {
+  notes.filter(searchTerm, (err, list,) => {
     if (err) {
       return next(err); // goes to error handler
     }
@@ -26,7 +26,7 @@ notesRouter.get('/api/notes', (req, res) => {
 notesRouter.get('/api/notes/:id', (req, res, next) => {
 
   const {id} = req.params;
-  notes.find(id, (err,item)=>{
+  notes.find(id, (err,item,)=>{
     if (err) {
       console.error(err);
     }
@@ -69,4 +69,4 @@ notesRouter.put('/api/notes/:id', jsonParser, (req, res, next) => {
   });
 });
   
-  
+module.exports = notesRouter;
