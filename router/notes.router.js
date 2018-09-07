@@ -42,7 +42,7 @@ notesRouter.get('/:id', (req, res, next) => {
     .then(item =>{
       if (item){
         res.json(item);
-        console.log( "==============ITEM object is" + JSON.stringify(item) );
+        console.log( '==============ITEM object is' + JSON.stringify(item) );
       } else {
         next ();
       }
@@ -121,22 +121,16 @@ notesRouter.delete('/:id', (req, res, next) => {
     err.status = 500;
     return next(err);
   }
-  notes.delete(id, (err, item) => {
-    if (err) {
-      return next(err);
-    }
-    if (id) {
+  notes.delete(id).then((id)=>{
+    if(id){
       console.log('item deleted');
       res.status(204).end();
     } else {
-      next();
+      next ();
     }
+  }).catch((err)=>{
+    next(err);
   });
-
-
 });
 
-
-
-  
 module.exports = notesRouter;
