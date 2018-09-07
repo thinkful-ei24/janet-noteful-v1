@@ -22,9 +22,9 @@ notesRouter.get('/', (req, res, next) => {
   // });
 
   notes.filter(searchTerm)
-    .then((searchTerm) =>{
-      res.json(searchTerm);
-      console.log('==============This is the searchTerm response' + JSON.stringify(searchTerm));
+    .then((searchResponse) =>{
+      res.json(searchResponse);
+      console.log('==============This is the searchTerm response' + JSON.stringify(searchResponse));
     })
     .catch(err =>{
       return next (err);
