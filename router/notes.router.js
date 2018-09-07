@@ -9,19 +9,21 @@ const notes = simDB.initialize(data);
 
 //===============================================================
 // search by title query
+
 notesRouter.get('/', (req, res, next) => {
+    ////Fetch searchTerm query from client request
+const { searchTerm } = req.query;
   
-  const { searchTerm } = req.query;
-  
-  notes.filter(searchTerm, (err, list,) => {
+notes.filter(searchTerm, (err, list) => {
     if (err) {
       return next(err); // goes to error handler
     }
     res.json(list); // responds with filtered array
   });
-  
-});
-  
+
+
+  });
+
 //===============================================================
  // get by ID   
 notesRouter.get('/:id', (req, res, next) => {

@@ -8,9 +8,6 @@ const notes = simDB.initialize(data);
 //import router
 const notesRouter = require('./router/notes.router');
 
-const { PORT } = require('./config');
-const {logger} = require('./middleware/logger');
-
 // ADD STATIC SERVER HERE
 app.use(express.static('public'));
 // Parse request body
@@ -24,7 +21,10 @@ app.use('/api/notes', notesRouter);
 
 
 
-//===============================================================
+const { PORT } = require('./config');
+const {logger} = require('./middleware/logger');
+
+//==========================================
 // //error handling
 
 app.get('/boom', (req, res, next) => {
@@ -37,7 +37,6 @@ app.use(function (req, res, next) {
   res.status(404).json({ message: 'Not Found' });
 });
 
-
 app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.json({
@@ -46,11 +45,7 @@ app.use(function (err, req, res, next) {
   });
 });
 
-
-
-
-
-//===============================================================
+//==========================================
 app.listen(PORT, () => {
   console.log(`Your app is listening on port ${PORT}`);
 });
