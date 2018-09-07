@@ -95,18 +95,18 @@ notesRouter.post('/', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-  /*(err, item) => {
-    if (err) {
-      return next(err);
-    }
-    if (item) {
-      res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
-    } else {
-      next();
-    }
-  } */
+ 
   notes.create(newItem)
-  .
+    .then((item)=>{
+      if (item){
+        res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
+      } else {
+        next();
+      }
+    }).catch((err)=>{
+      return next(err);
+    });
+  
 });
 
 //===============================================================
