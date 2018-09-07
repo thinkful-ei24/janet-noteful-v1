@@ -11,38 +11,43 @@ const notes = simDB.initialize(data);
 // search by title query
 
 notesRouter.get('/', (req, res, next) => {
-    ////Fetch searchTerm query from client request
-const { searchTerm } = req.query;
+  ////Fetch searchTerm query from client request
+  const { searchTerm } = req.query;
   
-notes.filter(searchTerm, (err, list) => {
-    if (err) {
-      return next(err); // goes to error handler
-    }
-    res.json(list); // responds with filtered array
-  });
+  // notes.filter(searchTerm, (err, list) => {
+  //   if (err) {
+  //     return next(err); // goes to error handler
+  //   }
+  //   res.json(list); // responds with filtered array
+  // });
+
+  notes.filter(searchTerm)
+    .then((searchTerm) =>{
+      res.json(searchTerm);
+    })
+    .catch(err =>{
+      next (err);
+    });
 
 
-  });
+});
 
 //===============================================================
- // get by ID   
+// get by ID   
 notesRouter.get('/:id', (req, res, next) => {
 
   const {id} = req.params;
-  notes.find(id, (err,item,)=>{
-    if (err) {
-      console.error(err);
-    }
-    if (item) {
-      console.log(item);
-      res.json(item);
-    } else {
-      console.log('not found');
-      next();
-    }
-      
-  });
-  
+  notes.find(id)
+    .then(item =>{
+      if (item){
+        res.json(item);
+        console.log( "==============ITEM object is" + JSON.stringify(item) );
+      } else {
+        next ();
+      }
+    }).catch(err => {
+      next(err);
+    });
 });
   
 //===============================================================
@@ -74,54 +79,54 @@ notesRouter.put('/', jsonParser, (req, res, next) => {
 //===============================================================
 // Post (insert) an item
 notesRouter.post('/', (req, res, next) => {
-    const { title, content } = req.body;
+  const { title, content } = req.body;
   
-    const newItem = { title, content };
-    /***** Never trust users - validate input *****/
-    if (!newItem.title) {
-      const err = new Error('Missing `title` in request body');
-      err.status = 400;
+  const newItem = { title, content };
+  /***** Never trust users - validate input *****/
+  if (!newItem.title) {
+    const err = new Error('Missing `title` in request body');
+    err.status = 400;
+    return next(err);
+  }
+  
+  notes.create(newItem, (err, item) => {
+    if (err) {
       return next(err);
     }
-  
-    notes.create(newItem, (err, item) => {
-      if (err) {
-        return next(err);
-      }
-      if (item) {
-        res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
-      } else {
-        next();
-      }
-    });
+    if (item) {
+      res.location(`http://${req.headers.host}/notes/${item.id}`).status(201).json(item);
+    } else {
+      next();
+    }
   });
+});
 
 //===============================================================
 // Delete an item
 notesRouter.delete('/:id', (req, res, next) => {
-    const {id} = req.params;
-    console.log(id);
+  const {id} = req.params;
+  console.log(id);
     
-    /***** Never trust users - validate input *****/
-    if (!id || isNaN(id)) {
-      const err = new Error('Missing `id` in request body');
-      err.status = 500;
+  /***** Never trust users - validate input *****/
+  if (!id || isNaN(id)) {
+    const err = new Error('Missing `id` in request body');
+    err.status = 500;
+    return next(err);
+  }
+  notes.delete(id, (err, item) => {
+    if (err) {
       return next(err);
     }
-    notes.delete(id, (err, item) => {
-      if (err) {
-        return next(err);
-      }
-      if (id) {
-        console.log('item deleted');
-        res.status(204).end();
-      } else {
-        next();
-      }
-    });
-
-
+    if (id) {
+      console.log('item deleted');
+      res.status(204).end();
+    } else {
+      next();
+    }
   });
+
+
+});
 
 
 
