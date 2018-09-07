@@ -24,9 +24,10 @@ notesRouter.get('/', (req, res, next) => {
   notes.filter(searchTerm)
     .then((searchTerm) =>{
       res.json(searchTerm);
+      console.log('==============This is the searchTerm response' + JSON.stringify(searchTerm));
     })
     .catch(err =>{
-      next (err);
+      return next (err);
     });
 
 
@@ -46,35 +47,41 @@ notesRouter.get('/:id', (req, res, next) => {
         next ();
       }
     }).catch(err => {
-      next(err);
+      return next(err);
     });
 });
   
 //===============================================================
 // PUT ENDPOINT, update a note object
-notesRouter.put('/', jsonParser, (req, res, next) => {
+notesRouter.put('/:id', jsonParser, (req, res, next) => {
   const id = req.params.id;
-  
+
   /***** Never trust users - validate input *****/
   const updateObj = {};
-  const updateFields = ['title', 'content'];
-  
-  updateFields.forEach(field => {
+  const updateableFields = ['title', 'content'];
+  updateableFields.forEach(field => {
     if (field in req.body) {
       updateObj[field] = req.body[field];
     }
   });
+  /***** Never trust users - validate input *****/
+  if (!updateObj.title) {
+    const err = new Error('Missing `title` in request body');
+    err.status = 400;
+    return next(err);
+  }
   
-  notes.update(id, updateObj, (err, item) => {
-    if (err) {
+  notes.update(id, updateObj)
+    .then(item => {
+      if (item) {
+        res.json(item);
+      } else {
+        next();
+      }
+    })
+    .catch(err => {
       return next(err);
-    }
-    if (item) {
-      res.json(item);
-    } else {
-      next();
-    }
-  });
+    });
 });
 //===============================================================
 // Post (insert) an item
@@ -88,8 +95,7 @@ notesRouter.post('/', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-  
-  notes.create(newItem, (err, item) => {
+  /*(err, item) => {
     if (err) {
       return next(err);
     }
@@ -98,7 +104,9 @@ notesRouter.post('/', (req, res, next) => {
     } else {
       next();
     }
-  });
+  } */
+  notes.create(newItem)
+  .
 });
 
 //===============================================================
