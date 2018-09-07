@@ -124,17 +124,15 @@ const noteful = (function () {
 
       const noteId = getNoteIdFromElement(event.currentTarget);
 
-      api.remove(noteId, () => {
-
-        api.search(store.currentSearchTerm, searchResponse => {
+      api.remove(noteId).then(() =>api.search(store.currentSearchTerm))
+        .then(searchResponse =>{
           store.notes = searchResponse;
           if (noteId === store.currentNote.id) {
             store.currentNote = {};
           }
           render();
-        });
-
-      });
+        }
+        );
     });
   }
 
