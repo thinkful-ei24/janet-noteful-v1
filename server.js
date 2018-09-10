@@ -18,11 +18,10 @@ app.use(morgan('dev'));
 //mounts Router
 app.use('/api/notes', notesRouter);
 
-
-
-
+//import port
 const { PORT } = require('./config');
-const {logger} = require('./middleware/logger');
+
+//const {logger} = require('./middleware/logger');
 
 //==========================================
 // //error handling
